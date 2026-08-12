@@ -1,1 +1,29 @@
+## Caso de Incidente
+
+1. Qual era o sistema?
+Ticketmaster (Novembro de 2022 - Vendas da "The Eras Tour" da Taylor Swift).
+
+2. O que aconteceu?
+O sistema abriu a pré-venda exclusiva. Milhões de fãs e uma quantidade massiva de bots acessaram a plataforma simultaneamente, derrubando o site e pausando a venda global.
+
+3. Quais foram os sintomas?
+Usuários recebiam páginas de erro 500 (Internal Server Error), a fila de espera virtual (queue) travou completamente (pessoas ficaram horas sem a barra de progresso andar), e usuários eram deslogados subitamente durante o fluxo de checkout.
+
+4. Qual foi a causa raiz?
+Uma falha catastrófica de escalabilidade e capacidade de banco de dados. O sistema recebeu 3.5 bilhões de requisições no total. A infraestrutura não conseguiu diferenciar o tráfego legítimo (fãs com códigos de pré-venda) de ataques massivos de bots de cambistas, sobrecarregando a camada de banco de dados que geria a emissão e a trava de assentos.
+
+5. Qual foi o impacto?
+Impacto financeiro incalculável, cancelamento da venda geral, danos massivos de reputação (Time-to-market prejudicado pela crise de RP) e intimação do CEO para depor no Senado Americano.
+
+6. Foi um problema de código, configuração, processo ou arquitetura?
+Foi primariamente um problema de Arquitetura (falta de um amortecedor de filas robusto o suficiente e gargalo no banco de dados central) e de Processo (falha na estratégia de mitigação e bloqueio de bots na borda).
+
+7. Quais decisões poderiam ter evitado o incidente?
+
+Implementar proteção antibot severa na camada de borda (Edge / WAF), impedindo que o tráfego sujo chegasse aos servidores de aplicação.
+
+Arquitetura baseada em eventos (Event-Driven) utilizando filas como amortecedores de forma rigorosa: em vez de tentar processar o pagamento e alocar o ingresso de forma síncrona na hora do clique, o sistema deveria apenas capturar a intenção de compra, colocar em uma fila, e processar de forma assíncrona (Consistência Eventual).
+
+8. Quais atributos de qualidade foram afetados?
+Disponibilidade (sistema caiu), Latência (filas travadas), Operabilidade e Resiliência.
 
